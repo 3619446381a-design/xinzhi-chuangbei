@@ -1,91 +1,122 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<title>芯知系统工作台</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body { margin:0; font-family:"Microsoft YaHei",sans-serif; background:#f1f5f9; }
-.sidebar {
-  width:240px; background:#0f172a; color:#e5e7eb;
-  position:fixed; top:0; bottom:0; padding:20px;
-}
-.sidebar h2 { color:#fff; }
-.sidebar button {
-  width:100%; margin:10px 0; padding:12px;
-  background:#1e293b; color:#fff;
-  border:none; border-radius:8px; cursor:pointer;
-}
-.main {
-  margin-left:260px; padding:30px;
-}
-.card {
-  background:#fff; padding:24px; border-radius:16px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.08);
-  max-width:800px;
-}
-.result { margin-top:20px; background:#f8fafc; padding:16px; border-radius:8px; }
-</style>
-<script>
-function show(id){
-  document.querySelectorAll('.module').forEach(m=>m.style.display='none');
-  document.getElementById(id).style.display='block';
-}
-function runCompliance(){
-  document.getElementById("res1").innerHTML =
-  "✅ 热扩散条款：符合<br>⚠️ 快充工况：需补充测试数据<br>❌ 过充安全验证未覆盖";
-}
-function runPatent(){
-  document.getElementById("res2").innerHTML =
-  "🔴 高风险：电极配比接近专利权利要求区间<br>🟡 建议：调整材料比例以规避侵权";
-}
-</script>
+  <meta charset="UTF-8">
+  <title>芯知系统工作台</title>
+  <style>
+    body{margin:0;font-family:Arial;background:#f4f6f8}
+    .layout{display:flex;height:100vh}
+    .sidebar{
+      width:220px;background:#1f2d3d;color:#fff;padding:20px
+    }
+    .sidebar h2{font-size:20px;margin-bottom:20px}
+    .sidebar button{
+      width:100%;margin-bottom:10px;padding:10px;
+      background:#304156;color:#fff;border:none;cursor:pointer
+    }
+    .content{flex:1;padding:30px}
+    .module{display:none}
+    input,select,textarea,button{
+      margin-top:8px;padding:6px;width:300px
+    }
+    ul{margin-top:10px}
+  </style>
 </head>
 
 <body>
+<div class="layout">
 
-<div class="sidebar">
-  <h2>芯知系统</h2>
-  <button onclick="show('m1')">电芯合规分析</button>
-  <button onclick="show('m2')">专利风险评估</button>
-  <button onclick="show('m3')">知识增强智研</button>
-  <button onclick="show('m4')">示例方案验证</button>
+  <div class="sidebar">
+    <h2>芯知系统</h2>
+    <button onclick="show('m1')">电芯方案合规分析</button>
+    <button onclick="show('m2')">标准条款映射分析</button>
+    <button onclick="show('m3')">专利风险识别</button>
+    <button onclick="show('m4')">综合结论输出</button>
+  </div>
+
+  <div class="content">
+
+    <!-- 模块一 -->
+    <div id="m1" class="module">
+      <h2>电芯方案合规分析</h2>
+      <label>是否支持快充</label><br>
+      <select id="fast">
+        <option value="yes">是</option>
+        <option value="no">否</option>
+      </select><br>
+
+      <label>是否具备热扩散防护</label><br>
+      <select id="thermal">
+        <option value="yes">是</option>
+        <option value="no">否</option>
+      </select><br>
+
+      <button onclick="analyze1()">开始分析</button>
+      <ul id="r1"></ul>
+    </div>
+
+    <!-- 模块二 -->
+    <div id="m2" class="module">
+      <h2>标准条款映射分析</h2>
+      <p>系统自动比对 GB 38031 条款与方案覆盖情况。</p>
+      <ul>
+        <li>✅ 热安全相关条款：已覆盖</li>
+        <li>⚠️ 快充工况条款：测试数据不足</li>
+        <li>❌ 过充极端场景条款：未验证</li>
+      </ul>
+    </div>
+
+    <!-- 模块三 -->
+    <div id="m3" class="module">
+      <h2>专利风险识别</h2>
+      <label>电芯技术特征描述</label><br>
+      <textarea id="tech" rows="4"
+        placeholder="如：高镍正极 + 快充结构 + 叠片工艺"></textarea><br>
+      <button onclick="analyze3()">开始识别</button>
+      <ul id="r3"></ul>
+    </div>
+
+    <!-- 模块四 -->
+    <div id="m4" class="module">
+      <h2>综合结论输出</h2>
+      <ul>
+        <li>✅ 方案整体符合新国标安全框架</li>
+        <li>⚠️ 快充与结构设计存在专利风险</li>
+        <li>✅ 建议开展专利规避与二次设计</li>
+      </ul>
+      <p><b>芯知建议：</b> 合规前置，创新可控。</p>
+    </div>
+
+  </div>
 </div>
 
-<div class="main">
+<script>
+function show(id){
+  document.querySelectorAll(".module").forEach(m=>m.style.display="none");
+  document.getElementById(id).style.display="block";
+}
 
-  <div id="m1" class="card module">
-    <h3>电芯方案合规分析</h3>
-    <p>选择研发方案参数，系统将进行新国标合规评估。</p >
-    <button onclick="runCompliance()">开始分析</button>
-    <div id="res1" class="result"></div>
-  </div>
+function analyze1(){
+  const r=document.getElementById("r1");
+  r.innerHTML="";
+  if(thermal.value==="yes")
+    r.innerHTML+="<li>✅ 热扩散防护：符合</li>";
+  else
+    r.innerHTML+="<li>❌ 热扩散防护：存在风险</li>";
+  if(fast.value==="yes")
+    r.innerHTML+="<li>⚠️ 快充：需补充测试数据</li>";
+}
 
-  <div id="m2" class="card module" style="display:none">
-    <h3>知识产权风险评估</h3>
-    <p>基于电芯技术特征的专利风险分析（示例）。</p >
-    <button onclick="runPatent()">进行分析</button>
-    <div id="res2" class="result"></div>
-  </div>
-
-  <div id="m3" class="card module" style="display:none">
-    <h3>知识增强智研辅助</h3>
-    <p>系统结合标准与专利知识，对研发问题进行辅助解释。</p >
-    <div class="result">
-      建议在提高能量密度的同时关注热稳定性条款，避免落入已公开专利保护范围。
-    </div>
-  </div>
-
-  <div id="m4" class="card module" style="display:none">
-    <h3>示例方案验证</h3>
-    <p>加载典型 NCM 电芯方案，展示系统分析流程。</p >
-    <div class="result">
-      ✅ 合规性：基本满足新国标要求  
-      <br>⚠️ 知识产权：存在可规避风险路径
-    </div>
-  </div>
-
-</div>
+function analyze3(){
+  const r=document.getElementById("r3");
+  r.innerHTML="";
+  if(tech.value.includes("快充"))
+    r.innerHTML+="<li>⚠️ 快充相关专利密集</li>";
+  if(tech.value.includes("叠片"))
+    r.innerHTML+="<li>⚠️ 叠片结构存在专利限制</li>";
+  r.innerHTML+="<li>✅ 建议规避设计</li>";
+}
+</script>
 
 </body>
 </html>
